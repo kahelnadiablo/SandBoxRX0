@@ -7,6 +7,6 @@ import lombok.Data;
  */
 @Data
 public class ArticlesParameters {
-    private final String Articles =  "/mobileapp/v1/entertainment/articles/all/";
+    private final String Articles =  "CONTENT INSIDE";
     private int pageNumber;
 }
