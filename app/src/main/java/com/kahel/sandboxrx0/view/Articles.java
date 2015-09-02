@@ -13,8 +13,11 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -32,6 +35,9 @@ import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringSystem;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareButton;
@@ -64,6 +70,7 @@ public class Articles extends ActionBarActivity {
 
     @Bind(R.id.btn_getnews) Button get_news;
     @Bind(R.id.list_news) GridView list_news;
+    @Bind(R.id.ic_image) ImageView image;
     ArticlesAdapter adapter;
     ArrayList<HashMap<String, String>> articles;
 
@@ -76,7 +83,50 @@ public class Articles extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        FacebookSdk.sdkInitialize(this);
+
+
+        // Create a system to run the physics loop for a set of springs.
+        SpringSystem springSystem = SpringSystem.create();
+
+        // Add a spring to the system.
+        final Spring spring = springSystem.createSpring();
+
+        // Add a listener to observe the motion of the spring.
+        spring.addListener(new SimpleSpringListener() {
+
+            @Override
+            public void onSpringUpdate(Spring spring) {
+                // You can observe the updates in the spring
+                // state by asking its current value in onSpringUpdate.
+                float value = (float) spring.getCurrentValue();
+                float scale = 1f - (value * 0.5f);
+                image.setScaleX(scale);
+                image.setScaleY(scale);
+            }
+        });
+
+        spring.setEndValue(1);
+
+        image.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                    spring.setEndValue(0);
+                }
+                return false;
+            }
+        });
+
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spring.setEndValue(1);
+            }
+        });
+
+
+
+                FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
         // this part is optional
@@ -137,7 +187,7 @@ public class Articles extends ActionBarActivity {
 
     public void requestUserProfile(LoginResult loginResult){
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, first_name, last_name, email, gender, birthday, location"); // Parámetros que pedimos a facebook
+        parameters.putString("fields", "id, first_name, last_name, email, gender, birthday, location"); //
 
         GraphRequest request = GraphRequest.newMeRequest(
                 loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
@@ -209,11 +259,11 @@ public class Articles extends ActionBarActivity {
     }
 
 
+    @OnClick(R.id.btn_getnews)
     public void GetArticles(){
-        /*ArticlesParameters articlesParameters = new ArticlesParameters();
+        ArticlesParameters articlesParameters = new ArticlesParameters();
         ArticlesPresenter presenter = new ArticlesPresenter(this, getBaseContext(),articlesParameters);
-        presenter.getArticles();*/
-
+        presenter.getArticles();
 
     }
 
@@ -230,8 +280,6 @@ public class Articles extends ActionBarActivity {
         }
     }
 
-
-    @OnClick(R.id.btn_getnews)
     public void facebookPost(){
         Bundle params = new Bundle();
         params.putString("message", "This is a test message");

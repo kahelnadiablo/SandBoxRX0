@@ -7,5 +7,5 @@ import lombok.Data;
  */
 @Data
 public class GlobalParameters {
-    private final String baseURL = "YOUR_URL";
+    private final String baseurl = "url";
 }

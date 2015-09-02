@@ -7,6 +7,6 @@ import lombok.Data;
  */
 @Data
 public class ArticlesParameters {
-    private final String Articles =  "CONTENT INSIDE";
+    private final String Articles =  "url";
     private int pageNumber;
 }

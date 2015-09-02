@@ -34,7 +34,7 @@ public class ArticlesPresenter {
 
     public void getArticles(){
         GlobalParameters globalParameters = new GlobalParameters();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(GET, globalParameters.getBaseURL().concat(parameters.getArticles()),
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(GET, globalParameters.getBaseurl().concat(parameters.getArticles()),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
