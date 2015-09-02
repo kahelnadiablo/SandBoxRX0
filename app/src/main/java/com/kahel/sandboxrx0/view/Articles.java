@@ -9,6 +9,9 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -69,7 +72,7 @@ import butterknife.OnClick;
 public class Articles extends ActionBarActivity {
 
     @Bind(R.id.btn_getnews) Button get_news;
-    @Bind(R.id.list_news) GridView list_news;
+    @Bind(R.id.list_news) RecyclerView list_news;
     @Bind(R.id.ic_image) ImageView image;
     ArticlesAdapter adapter;
     ArrayList<HashMap<String, String>> articles;
@@ -171,6 +174,25 @@ public class Articles extends ActionBarActivity {
 
         articles = new ArrayList<HashMap<String, String>>();
         adapter = new ArticlesAdapter(getBaseContext(),articles);
+
+        // use a linear layout manager
+        GridLayoutManager mLayoutManager = new GridLayoutManager(this, 2);
+        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch(adapter.getItemViewType(position)){
+                    case 2:
+                        return 2;
+                    case 1:
+                        return 1;
+                    default:
+                        return -1;
+                }
+            }
+        });
+        list_news.setLayoutManager(mLayoutManager);
+
+
         list_news.setAdapter(adapter);
         get_news.setText("Get Articles");
 
